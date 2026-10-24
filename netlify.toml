@@ -1,0 +1,22 @@
+# Configuration Netlify (lue automatiquement lors d'un déploiement Git ou CLI)
+[build]
+  command = "node agent/build.mjs"     # 1) l'agent récupère les annonces sur akorimmo.com  2) le site est généré
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
