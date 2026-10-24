@@ -21,7 +21,6 @@ export const GROUPE = [
   { id: 'appartement06', nom: 'Appartement06.com', url: 'https://www.appartement06.com', texte: 'Appartements dans les Alpes-Maritimes' },
   { id: 'studio06', nom: 'Studio06.fr', url: 'https://www.studio06.fr', texte: 'Studios et petites surfaces à Nice' },
   { id: 'commerce06', nom: 'Commerce06.com', url: 'https://www.commerce06.com', texte: 'Commerces, murs et bureaux' },
-  { id: 'maison83', nom: 'Maison83.com', url: 'https://www.maison83.com', texte: 'Maisons et villas dans le Var' },
 ];
 
 const tel = (t) => `tel:+33${t.replace(/[^\d]/g, '').replace(/^0/, '')}`;
@@ -40,7 +39,7 @@ const ICON = {
   surf: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 9h5 M15 4v5" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>',
   door: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3h12v18 M3 21h18 M14 12h.01" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   bed: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18V6 M3 14h18v4 M21 14v-2a3 3 0 0 0-3-3h-7v5 M7 11.5h.01" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
-  phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z M3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
 };
 
@@ -77,7 +76,7 @@ ${image ? `<meta property="og:image" content="${esc(image)}">` : ''}
 ${carte ? '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">' : ''}
 <style>html,body{background:#000;color:#f2f2f2;margin:0}.entete-logo img{max-width:min(560px,92vw);height:auto;margin:0 auto}</style>
 <link rel="stylesheet" href="/assets/style.css?v=${site.version}">
-${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''}
+${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\u003c')}</script>` : ''}
 </head>
 <body${accueil ? ' class="page-accueil"' : ''}>
 <a class="sauter" href="#contenu">Aller au contenu</a>
@@ -105,7 +104,7 @@ ${carte ? '<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/lea
 }
 
 // Logos cliquables des autres sites du groupe, en bas de chaque page.
-const ORDRE_LOGOS = ['maison06', 'maison83', 'appartement06', 'commerce06', 'studio06'];
+const ORDRE_LOGOS = ['maison06', 'appartement06', 'commerce06', 'studio06'];
 function autresSites(site) {
   const sites = ORDRE_LOGOS.filter((id) => id !== site.id).map((id) => GROUPE.find((g) => g.id === id));
   return `<div class="autres-sites">
@@ -129,7 +128,7 @@ function pied(site, compact = false) {
     </div>
     <div>
       <h2>Nos agences</h2>
-      ${AGENCE.agences.map((a) => `<p><strong>${AGENCE.nom} – ${esc(a.nom.replace('Agence ', ''))}</strong><br><span class="pied-agence">${esc(a.rue)} – ${a.cp} ${a.ville}</span><br><a href="${tel(a.tel)}">${ICON.phone}${a.tel}</a><br><a href="mailto:${a.mail}">${ICON.mail}${a.mail}</a></p>`).join('')}
+      ${AGENCE.agences.map((a) => `<p><strong>${AGENCE.nom} – ${esc(a.nom.replace('Agence ', ''))}</strong><br><span class="pied-agence">${esc(a.rue)} – ${a.cp} ${a.ville}</span><br><a href="${tel(a.tel)}">${a.tel}</a> · <a href="mailto:${a.mail}">${a.mail}</a></p>`).join('')}
     </div>
     <div>
       <h2>Akorimmo</h2>
@@ -139,7 +138,7 @@ function pied(site, compact = false) {
   <div class="conteneur">${autresSites(site)}</div>
   <div class="conteneur pied-bas">
     <span>© ${new Date().getFullYear()} ${esc(site.nom)} · Akorimmo</span>
-    <span><a href="${AGENCE.mentions}" rel="noopener">Mentions légales</a> · <a href="${AGENCE.honoraires}" rel="noopener">Barème d’honoraires</a> · Annonces mises à jour le ${esc(site.majTexte)}</span>
+    <span><a href="${AGENCE.mentions}" rel="noopener">Mentions légales</a> · <a href="${AGENCE.honoraires}" rel="noopener">Barème d’honoraires</a> · Annonces mises à jour le ${esc(site.maj)}</span>
   </div>
 </footer>`;
 }
@@ -152,7 +151,7 @@ export function carteBien(b, site) {
     b.pieces ? `<li>${ICON.door}${b.pieces} pièce${b.pieces > 1 ? 's' : ''}</li>` : '',
     b.chambres ? `<li>${ICON.bed}${b.chambres} ch.</li>` : '',
   ].join('');
-  return `<article class="carte-bien" data-ville="${esc(b.ville)}" data-prix="${b.prix ?? ''}" data-surface="${b.surface ?? ''}" data-pieces="${b.pieces ?? ''}" data-chambres="${b.chambres ?? ''}" data-date="${esc(b.publie || '')}" data-lat="${b.lat ?? ''}" data-lng="${b.lng ?? ''}" data-id="${b.id}">
+  return `<article class="carte-bien" data-ville="${esc(b.ville)}" data-prix="${b.prix ?? ''}" data-surface="${b.surface ?? ''}" data-pieces="${b.pieces ?? ''}" data-chambres="${b.chambres ?? ''}">
   <a href="${urlBien(b)}" class="carte-lien">
     <div class="carte-photo">${p ? `<img src="${esc(p)}" alt="${esc(b.titre)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : '<div class="sans-photo">Photo à venir</div>'}
       ${b.nouveau ? '<span class="pastille">Nouveau</span>' : ''}</div>
@@ -171,7 +170,7 @@ export function carteBien(b, site) {
 export function mailInfo(b, site) {
   const ref = b.reference || b.id;
   const sujet = `Demande d'informations – ${b.titre} (réf. ${ref})`;
-  const corps = `Bonjour,\n\nJe souhaite recevoir plus d'informations sur ce bien :\n${b.titre}\nRéférence : ${ref}\nPrix : ${euros(b.prix)}\nVille : ${b.ville}\nAnnonce : https://${site.domaine}${urlBien(b)}\n\nMes coordonnées :\nNom :\nTéléphone :\n\nMerci de me recontacter.`;
+  const corps = `Bonjour,\n\nJe souhaite recevoir plus d'informations sur ce bien :\n${b.titre}\nRéférence : ${ref}\nPrix : ${euros(b.prix)}\nVille : ${b.ville}\nAnnonce : https://${site.domaine}${urlBien(b)}`;
   return `mailto:${AGENCE.mail1}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
 }
 
@@ -190,7 +189,7 @@ export function recherche(villes, { action = '/biens/', id = 'recherche', bouton
       <div class="multi-actions"><button type="button" data-tout>Tout effacer</button><button type="button" data-fermer>Valider</button></div>
     </div>
   </div>
-  <label><span>Budget maximum</span><select name="budget"><option value="">Indifférent</option>${BUDGETS.map((n) => `<option value="${n}">${euros(n)}</option>`).join('')}<option value="1000000+">${euros(1000000)} et plus</option></select></label>
+  <label><span>Budget maximum</span><select name="budget"><option value="">Indifférent</option>${BUDGETS.map((n) => `<option value="${n}">${euros(n)}</option>`).join('')}<option value="1000000+">1 000 000 € et plus</option></select></label>
   <button class="bouton" type="submit">${esc(bouton)}</button>
 </form>`;
 }
@@ -247,9 +246,9 @@ export function formulaire(nom, contenu, bouton = 'Envoyer') {
 export const champ = (nom, label, type = 'text', opts = {}) => {
   const req = opts.requis ? ' required' : '';
   const id = `f-${nom}`;
-  if (type === 'textarea') return `<label class="champ${opts.large ? ' large' : ''}" for="${id}"><span>${esc(label)}${opts.requis ? ' *' : ''}</span><textarea id="${id}" name="${nom}" rows="${opts.lignes || 5}"${req}>${esc(opts.valeur || '')}</textarea></label>`;
+  if (type === 'textarea') return `<label class="champ${opts.large ? ' large' : ''}" for="${id}"><span>${esc(label)}${opts.requis ? ' *' : ''}</span><textarea id="${id}" name="${nom}" rows="${opts.large ? 6 : 4}"${req}>${opts.valeur || ''}</textarea></label>`;
   if (type === 'select') return `<label class="champ" for="${id}"><span>${esc(label)}</span><select id="${id}" name="${nom}"${req}>${opts.options.map((o) => `<option>${esc(o)}</option>`).join('')}</select></label>`;
-  return `<label class="champ${opts.large ? ' large' : ''}" for="${id}"><span>${esc(label)}${opts.requis ? ' *' : ''}</span><input id="${id}" type="${type}" name="${nom}"${opts.auto ? ` autocomplete="${opts.auto}"` : ''}${opts.placeholder ? ` placeholder="${esc(opts.placeholder)}"` : ''}${req}></label>`;
+  return `<label class="champ${opts.large ? ' large' : ''}" for="${id}"><span>${esc(label)}${opts.requis ? ' *' : ''}</span><input id="${id}" type="${type}" name="${nom}"${opts.auto ? ` autocomplete="${opts.auto}"` : ''}${req}></label>`;
 };
 
 /** Bloc « nos deux agences » (page Contact, fiches…) */
