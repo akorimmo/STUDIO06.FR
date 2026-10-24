@@ -1,0 +1,11 @@
+{
+  "name": "site-immobilier-akorimmo",
+  "private": true,
+  "type": "module",
+  "description": "Site statique + agent de récupération des annonces akorimmo.com",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "node agent/build.mjs",
+    "hors-ligne": "node agent/build.mjs --hors-ligne"
+  }
+}
