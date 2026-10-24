@@ -275,3 +275,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .autres-sites a { display: block; border-radius: 6px; transition: transform .2s, filter .2s; }
 .autres-sites a:hover { transform: translateY(-2px); filter: drop-shadow(0 0 8px rgba(226, 0, 46, .6)); }
 .autres-sites img { display: block; width: clamp(180px, 22vw, 250px); height: auto; }
+/* Drapeaux de langue (haut à droite) */
+.langues { position: absolute; top: 10px; right: 14px; display: flex; gap: 6px; z-index: 5; }
+.langues button { width: 30px; height: 20px; padding: 0; border: 1px solid rgba(255, 255, 255, .35); border-radius: 3px; background: none; cursor: pointer; overflow: hidden; opacity: .75; transition: opacity .2s, transform .2s; }
+.langues button svg { display: block; width: 100%; height: 100%; }
+.langues button:hover, .langues button[aria-pressed="true"] { opacity: 1; transform: translateY(-1px); border-color: #fff; }
+.langues button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--accent); }
+@media (max-width: 640px) { .entete-logo { padding-top: 38px; } .langues { top: 8px; right: 10px; } .langues button { width: 26px; height: 17px; } }
+/* Masque la barre et les bulles ajoutées par Google Traduction */
+iframe.skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
+body { top: 0 !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
+font[style] { background: none !important; box-shadow: none !important; }

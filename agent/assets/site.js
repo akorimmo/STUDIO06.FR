@@ -9,6 +9,59 @@
   function lienLocal(h) { return local && h && !/^[a-z]+:|^#/i.test(h) ? h.replace(/\/(\?|#|$)/, '/index.html$1') : h; }
   if (local) $$('a[href]').forEach(function (a) { var h = a.getAttribute('href'); if (/\/(\?|#|$)/.test(h)) a.setAttribute('href', lienLocal(h)); });
 
+  // Drapeaux en haut à droite : traduction du site (Google Traduction)
+  (function () {
+    var tete = $('.entete');
+    if (!tete || $('.langues', tete)) return;
+    var FLAGS = {
+      fr: '<svg viewBox="0 0 3 2"><path fill="#002395" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ED2939" d="M2 0h1v2H2z"/></svg>',
+      en: '<svg viewBox="0 0 60 30"><clipPath id="uk-s"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="uk-t"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#uk-s)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#uk-t)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>',
+      it: '<svg viewBox="0 0 3 2"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#CE2B37" d="M2 0h1v2H2z"/></svg>',
+      es: '<svg viewBox="0 0 750 500"><path fill="#AA151B" d="M0 0h750v500H0z"/><path fill="#F1BF00" d="M0 125h750v250H0z"/></svg>'
+    };
+    var NOMS = { fr: 'Français', en: 'English', it: 'Italiano', es: 'Español' };
+    var lire = function () { try { return localStorage.getItem('langue') || 'fr'; } catch (e) { return 'fr'; } };
+    var ecrire = function (l) { try { if (l === 'fr') localStorage.removeItem('langue'); else localStorage.setItem('langue', l); } catch (e) {} };
+    var boite = document.createElement('div');
+    boite.className = 'langues notranslate'; boite.setAttribute('translate', 'no');
+    boite.innerHTML = ['fr', 'en', 'it', 'es'].map(function (l) {
+      return '<button type="button" data-langue="' + l + '" title="' + NOMS[l] + '" aria-label="' + NOMS[l] + '">' + FLAGS[l] + '</button>';
+    }).join('');
+    tete.appendChild(boite);
+    function marquer(l) { $$('button', boite).forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.langue === l ? 'true' : 'false'); }); }
+    var charge = false;
+    function chargerGoogle(cb) {
+      if (charge) { cb(); return; }
+      charge = true;
+      var d = document.createElement('div'); d.id = 'google_translate_element'; d.style.display = 'none'; document.body.appendChild(d);
+      window.initTraduction = function () {
+        new window.google.translate.TranslateElement({ pageLanguage: 'fr', includedLanguages: 'en,it,es', autoDisplay: false }, 'google_translate_element');
+        cb();
+      };
+      var sc = document.createElement('script');
+      sc.src = 'https://translate.google.com/translate_a/element.js?cb=initTraduction';
+      document.head.appendChild(sc);
+    }
+    function appliquer(l, essais) {
+      var combo = $('.goog-te-combo');
+      if (!combo) { if ((essais || 0) < 60) setTimeout(function () { appliquer(l, (essais || 0) + 1); }, 150); return; }
+      combo.value = l; combo.dispatchEvent(new Event('change'));
+    }
+    function effacerCookie() {
+      var h = location.hostname, parts = h.split('.'), doms = ['', h, '.' + h];
+      if (parts.length > 1) doms.push('.' + parts.slice(-2).join('.'));
+      doms.forEach(function (dm) { document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (dm ? '; domain=' + dm : ''); });
+    }
+    function choisir(l) {
+      if (l === 'fr') { ecrire('fr'); effacerCookie(); location.reload(); return; }
+      ecrire(l); marquer(l);
+      chargerGoogle(function () { appliquer(l); });
+    }
+    boite.addEventListener('click', function (e) { var b = e.target.closest('button[data-langue]'); if (b) choisir(b.dataset.langue); });
+    var actuelle = lire(); marquer(actuelle);
+    if (actuelle !== 'fr') chargerGoogle(function () { appliquer(actuelle); });
+  })();
+
   // Vitrine de l'accueil : 3 biens qui changent toutes les 5 secondes, en décalé
   var fen = $('#fenetre'), dn = $('#vitrine-donnees');
   if (fen && dn) {
